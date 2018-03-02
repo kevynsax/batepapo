@@ -177,21 +177,28 @@ a.article, a.article:hover {
     padding: 20px;
     min-height: 100vh;
     transition: all 0.3s;
+    margin-top: 60px;
 }
 
-#content .messageBar {
+#content .message-bar {
     padding: 10px 15px;
     position: fixed;
     left: 250px;
-    width: unset;
+    width: 82%;
     bottom: 0;
     background-color: #f7f5d9;
 }
 
-#content #alert{
-    padding: -20px;
-    min-height: 100vh;
+#content .contact-bar {
+    padding: 0px 0px 10px 20px;
+    position: fixed;
+    left: 250px;
+    width: 82%;
+    top: 0;
+    background-color: #f7f5d9;
 }
+
+
 
 
 

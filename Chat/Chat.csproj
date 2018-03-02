@@ -1029,6 +1029,7 @@
     <TypeScriptCompile Include="Scripts\HubService.ts" />
     <TypeScriptCompile Include="Scripts\MessageController.ts" />
     <TypeScriptCompile Include="Scripts\Interfaces.ts" />
+    <TypeScriptCompile Include="Scripts\Directives.ts" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

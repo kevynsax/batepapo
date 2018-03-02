@@ -57,13 +57,16 @@
 
         </nav>
         <div id="content">
+            <div class="contact-bar" ng-if="!!ctrl.contactSelected">
+                <h3>{{ctrl.contactSelected.Name}}</h3>
+            </div>
             <div id="alert">
                 <div uib-alert dismiss-on-timeout="9000" ng-repeat="aa in ctrl.alerts" close="ctrl.DeleteAlert($index)" ng-class="'alert alert-'+aa.Type || 'success'" ng-bind="aa.Text" />
             </div>
             <div class="row">
 
             </div>
-            <footer class="messageBar">
+            <footer class="message-bar" ng-if="!!ctrl.contactSelected">
                 <input class="form-control" placeholder="Digite a sua mensagem aqui" ng-model="ctrl.txtMessage" />
             </footer>
         </div>
