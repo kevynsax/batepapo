@@ -1,0 +1,89 @@
+﻿@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="ChatApp">
+<head>
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+</head>
+<body ng-controller="MessageController as ctrl">
+    <form ng-if="!ctrl.UserLoged.ConnectionId">
+        <div class="form-group text-right">
+            <label class="col-sm-1 control-label">Name</label>
+            <div class="col-sm-11">
+                <input type="text" class="form-control" ng-model="ctrl.UserLoged.Name" />
+            </div>
+        </div>
+        <div class="form-group text-right">
+            <label class="col-sm-1 control-label">Cellphone</label>
+            <div class="col-sm-11">
+                <input type="text" class="form-control" ui-br-phone-number ng-model="ctrl.UserLoged.CellPhone" />
+            </div>
+        </div>
+        <div class="col-sm-8" style="padding-top: 20px;">
+            <button type="submit" class="btn btn-default" ng-click="ctrl.FirstConnection()">LogIn</button>
+        </div>
+    </form>
+    <div ng-if="!!ctrl.UserLoged.ConnectionId" class="wrapper">
+        <nav id="sidebar">
+            <div class="sidebar-actions">
+                <a href="#" ng-if="!ctrl.showNewPhoneField" ng-click="ctrl.showNewPhoneField=true"><i class="fa fa-plus"></i></a>
+                <div ng-if="!!ctrl.showNewPhoneField">#<input type="text" style="color: black" ng-model="ctrl.cellphoneToAdd" ui-br-phone-number />&nbsp;&nbsp;<span ng-if="!!ctrl.cellphoneToAdd" class="pull-right" style="cursor:pointer" ng-click="ctrl.RequestAddUser()"><i class="fa fa-check"></i></span></div>
+            </div>
+            <div class="sidebar-header">
+                <h3>{{ctrl.UserLoged.Name}} </h3>
+            </div>
+            <div class="search-bar">
+                <div class="form-group has-feedback">
+                    <input class="form-control" ng-model="ctrl.searchField" />
+                    <i class="fa fa-search form-control-feedback"></i>
+                </div>
+            </div>
+            <ul class="list-unstyled usuarios">
+                <li ng-repeat="contact in ctrl.Contacts">
+                    <a href="#" ng-click="ctrl.SelectContact(contact)">
+                        <span class="titulo" ng-bind="contact.Name" />
+                        <span class="texto" ng-bind="ctrl.LastMessage(contact) | limitTo: 20" />
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="list-unstyled CTAs">
+                <li><a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a></li>
+                <li><a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a></li>
+            </ul>
+
+        </nav>
+        <div id="content">
+            <div id="alert">
+                <div uib-alert dismiss-on-timeout="9000" ng-repeat="aa in ctrl.alerts" close="ctrl.DeleteAlert($index)" ng-class="'alert alert-'+aa.Type || 'success'" ng-bind="aa.Text" />
+            </div>
+            <div class="row">
+
+            </div>
+            <footer class="messageBar">
+                <input class="form-control" placeholder="Digite a sua mensagem aqui" ng-model="ctrl.txtMessage" />
+            </footer>
+        </div>
+
+    </div>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+    <script src="~/lib/jquery-1.10.2.js"></script>
+    <script src="~/lib/jquery.signalR-2.2.2.js"></script>
+    <script src="~/lib/angular.js"></script>
+    <script src="~/lib/angular-touch.min.js"></script>
+    <script src="~/lib/angular-animate.min.js"></script>
+    <script src="~/lib/angular-ui/ui-grid.min.js"></script>
+    <script src="~/lib/angular-ui/ui-bootstrap.js"></script>
+    <script src="~/lib/angular-input-masks.js"></script>
+    <script src="~/lib/angular-ui/ui-bootstrap-tpls-2.3.0.min.js"></script>
+    <script src="~/lib/angular-ui/mask.min.js"></script>
+    <script src="~/lib/ngStorage.min.js"></script>
+    <script src="~/Scripts/HubService.js"></script>
+    <script src="~/Scripts/MessageController.js"></script>
+    <script src="~/Scripts/App.js"></script>
+</body>
+</html>
