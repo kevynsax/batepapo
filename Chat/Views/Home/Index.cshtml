@@ -44,17 +44,11 @@
             <ul class="list-unstyled usuarios">
                 <li ng-repeat="contact in ctrl.Contacts">
                     <a href="#" ng-click="ctrl.SelectContact(contact)">
-                        <span class="titulo" ng-bind="contact.Name" />
-                        <span class="texto" ng-bind="ctrl.LastMessage(contact) | limitTo: 20" />
+                        <span class="titulo" ng-bind="contact.Name"></span>
+                        <span class="texto">{{ctrl.LastMessage(contact).Text}} <span class="pull-right">{{ctrl.LastMessage(contact).Date | date: 'HH:mm'}}</span></span>
                     </a>
                 </li>
             </ul>
-
-            <ul class="list-unstyled CTAs">
-                <li><a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a></li>
-                <li><a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a></li>
-            </ul>
-
         </nav>
         <div id="content">
             <div class="contact-bar" ng-if="!!ctrl.contactSelected">
@@ -64,10 +58,16 @@
                 <div uib-alert dismiss-on-timeout="9000" ng-repeat="aa in ctrl.alerts" close="ctrl.DeleteAlert($index)" ng-class="'alert alert-'+aa.Type || 'success'" ng-bind="aa.Text" />
             </div>
             <div class="row">
-
+                <div class="row">
+                    <div class="col-md-12" ng-repeat="msg in ctrl.ListOfMessages()">
+                        <span ng-if="!ctrl.DidISend(msg)" class="label label-success pull-left">{{msg.Text}}</span> 
+                        <span ng-if="ctrl.DidISend(msg)" class="label label-default pull-right">{{msg.Text}}</span>
+                    </div>
+                </div>
             </div>
             <footer class="message-bar" ng-if="!!ctrl.contactSelected">
-                <input class="form-control" placeholder="Digite a sua mensagem aqui" ng-model="ctrl.txtMessage" />
+                <input ng-if="ctrl.SelectedUserIsLogged()" class="form-control" placeholder="Digite a sua mensagem aqui" enter-action="ctrl.SendMessage()" ng-model="ctrl.txtMessage" />
+                <span ng-if="!ctrl.SelectedUserIsLogged()" class="form-control">Usuário não esta logado</span>
             </footer>
         </div>
 
@@ -87,6 +87,7 @@
     <script src="~/lib/ngStorage.min.js"></script>
     <script src="~/Scripts/HubService.js"></script>
     <script src="~/Scripts/MessageController.js"></script>
+    <script src="~/Scripts/Directives.js"></script>
     <script src="~/Scripts/App.js"></script>
 </body>
 </html>

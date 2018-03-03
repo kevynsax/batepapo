@@ -2,7 +2,7 @@
     import Data = Chat.Intranet.Interfaces;
     
     export class MessageController implements ng.IController {
-        public static $inject = ["$scope", "HubService", "$sessionStorage"];
+        public static $inject = ["$scope", "HubService", "$sessionStorage", "$timeout"];
         $onInit = () => { };
 
         txtMessage: string;
@@ -10,15 +10,16 @@
         contactSelected: Data.User;
         cellphoneToAdd: string;
         showNewPhoneField: boolean = false;
-        alerts: Data.Alert[] =[];
-        constructor(public $scope, public service: Services.HubService, public $sessionStorage) {
+        alerts: Data.Alert[] = [];
+        listContactsToUpdateMyConnectionId: Data.User[];
+
+        constructor(public $scope, public service: Services.HubService, public $sessionStorage, public $timeout: ng.ITimeoutService) {
             this.DefineWhatchers();
 
             this.Messages = this.Messages ? this.Messages : [];
             this.UserLoged = this.UserLoged ? this.UserLoged : { Name: null, CellPhone: null, ConnectionId: null };
             this.Contacts = this.Contacts ? this.Contacts : [];
-
-            this.UserLoged.ConnectionId = null;
+            
             if (this.UserLoged.CellPhone) this.Connect();
         }
 
@@ -44,22 +45,40 @@
 
             this.$scope.$on('userShowed', (event, user: Data.User) => {
                 this.Contacts.push(user);
+                this.$scope.$apply();
             });
 
             this.$scope.$on('connectionIdUpdated', (event, user: Data.User) => {
                 this.HandleContactUpdated(user);
-            })
+                this.$scope.$apply();
+            });
+
+            this.$scope.$on('didUpdated', (event, contact: Data.User) => {
+                this.listContactsToUpdateMyConnectionId = this.listContactsToUpdateMyConnectionId.filter(a => a.ConnectionId != contact.ConnectionId);
+            });
         }
 
-        HandleContactUpdated(user: Data.User) {
-            this.Contacts.filter(a => a.CellPhone == user.CellPhone)[0].ConnectionId = user.ConnectionId;
+        HandleContactUpdated(newUser: Data.User) {
+            var user = this.Contacts.filter(a => a.CellPhone == newUser.CellPhone)[0];
+            this.UpdateMessages(newUser, user);
+            user.ConnectionId = newUser.ConnectionId;
+        }
+
+        UpdateMessages(newUser: Data.User, oldUser: Data.User) {
+            this.Messages.filter(a => a.From == oldUser.ConnectionId).forEach(a => { a.From = newUser.ConnectionId; })
+            this.Messages.filter(a => a.To == oldUser.ConnectionId).forEach(a => { a.To = newUser.ConnectionId; })
         }
 
         HandleRequestToShow(userToShow: Data.User, userRequested: Data.User) {
-            if (this.UserLoged.CellPhone == userToShow.CellPhone) {
+            if (this.UserLoged.CellPhone != userToShow.CellPhone)
+                return;
+
+            if (this.Contacts.filter(a => a.CellPhone == userRequested.CellPhone).length)
+                this.HandleContactUpdated(this.Contacts.filter(a => a.CellPhone == userRequested.CellPhone)[0]);
+            else
                 this.Contacts.push(userRequested);
-                this.service.ShowMySelf(this.UserLoged, userRequested);
-            }
+
+            this.service.ShowMySelf(this.UserLoged, userRequested);
         }
 
         FirstConnection() {
@@ -71,10 +90,19 @@
 
         Connect() {
             this.service.Connect().done(() => {
+                this.UpdateMessages(angular.extend({}, this.UserLoged, { ConnectionId: this.service.ConnectionId() } as Data.User), this.UserLoged);
                 this.UserLoged.ConnectionId = this.service.ConnectionId();
-                this.Contacts.forEach(a => { this.service.UpdateConnectionId(this.UserLoged, a); })
+                this.listContactsToUpdateMyConnectionId = angular.extend([], this.Contacts);
+                this.UpdateConnectionIdToContacts();
                 this.$scope.$apply();
             })
+        }
+
+        UpdateConnectionIdToContacts() {
+            if (!!this.listContactsToUpdateMyConnectionId) {
+                this.listContactsToUpdateMyConnectionId.forEach(a => { this.service.UpdateConnectionId(this.UserLoged, a); })
+                this.$timeout(this.UpdateConnectionIdToContacts, 30000);
+            }
         }
 
         SendMessage() {
@@ -84,9 +112,9 @@
             this.txtMessage = null;
         }
 
-        LastMessage(user: Data.User): string {
+        LastMessage(user: Data.User): Data.Message {
             var msgs = this.Messages && this.Messages.filter(a => a.From == user.ConnectionId || a.To == user.ConnectionId);
-            return msgs && msgs[msgs.length - 1] && msgs[msgs.length - 1].Text;             
+            return msgs[msgs.length - 1];             
         }
 
         Clean() {
@@ -111,6 +139,17 @@
         InsertAlert(msg: string, type: Data.typeAlert = 'success') {
             this.alerts.push({ Text: msg, Type: type } as Data.Alert);
         }
-        
+
+        DidISend(msg: Data.Message): boolean {
+            return msg.From == this.UserLoged.ConnectionId;
+        }
+
+        ListOfMessages(): Data.Message[] {
+            return this.contactSelected && this.Messages && this.Messages.filter(a => a.From == this.contactSelected.ConnectionId || a.To == this.contactSelected.ConnectionId);
+        }
+
+        SelectedUserIsLogged(): boolean {
+            return !!this.listContactsToUpdateMyConnectionId.filter(a => a.ConnectionId == this.contactSelected.ConnectionId).length;
+        }
     }
 }

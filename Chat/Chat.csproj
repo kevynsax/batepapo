@@ -27,7 +27,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <TypeScriptToolsVersion>2.7</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>2.5</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -225,6 +225,7 @@
     <Content Include="lib\angular.min.js" />
     <None Include="Properties\PublishProfiles\batepapo - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\batepapo - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <TypeScriptCompile Include="Scripts\App.ts" />
     <Content Include="lib\bootstrap.js" />
     <Content Include="lib\bootstrap.min.js" />

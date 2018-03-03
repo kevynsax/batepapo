@@ -25,5 +25,10 @@ namespace Chat.SignalR
         {
             Clients.Client(to).connectionIdUpdated(connectionId, cellPhone);
         }
+
+        public void ConfirmUpdate(string confirmTo, string confirmatedConnectionId)
+        {
+            Clients.Client(confirmTo).didUpdated(confirmatedConnectionId);
+        }
     }
 }

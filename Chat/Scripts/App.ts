@@ -3,4 +3,5 @@
         .value("$", $)
         .controller('MessageController', Chat.Intranet.Controllers.MessageController)
         .service('HubService', Chat.Intranet.Services.HubService)
+        .directive('enterAction', Chat.Intranet.Directives.EnterAction)
 }

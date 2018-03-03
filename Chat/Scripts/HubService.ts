@@ -34,6 +34,11 @@
                 this.$rootScope.$broadcast('connectionIdUpdated', user);
             })
 
+            this.proxy.on('didUpdated', (connctionId) => {
+                var contact = { ConnectionId: connctionId } as Data.User;
+                this.$rootScope.$broadcast('didUpdated', contact);
+            })
+
             return this.connection.start();
         }
 
@@ -67,6 +72,10 @@
 
         UpdateConnectionId(user: Data.User, to: Data.User) {
             this.proxy.invoke('UpdateConnectionId', user.ConnectionId, user.CellPhone, to.ConnectionId);
+        }
+
+        ConfirmUpdate(mySelf: Data.User, to: Data.User) {
+            this.proxy.invoke('ConfirmUpdate', to.ConnectionId, mySelf.ConnectionId);
         }
     }
 }
