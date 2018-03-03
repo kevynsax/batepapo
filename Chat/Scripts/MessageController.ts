@@ -2,7 +2,7 @@
     import Data = Chat.Intranet.Interfaces;
     
     export class MessageController implements ng.IController {
-        public static $inject = ["$scope", "HubService", "$sessionStorage", "$timeout"];
+        public static $inject = ["$scope", "HubService", "$sessionStorage", "$timeout", "$localStorage"];
         $onInit = () => { };
 
         txtMessage: string;
@@ -13,7 +13,7 @@
         alerts: Data.Alert[] = [];
         listContactsToUpdateMyConnectionId: Data.User[];
 
-        constructor(public $scope, public service: Services.HubService, public $sessionStorage, public $timeout: ng.ITimeoutService) {
+        constructor(public $scope, public service: Services.HubService, public $sessionStorage, public $timeout: ng.ITimeoutService, public $localStorage) {
             this.DefineWhatchers();
 
             this.Messages = this.Messages ? this.Messages : [];
@@ -23,14 +23,14 @@
             if (this.UserLoged.CellPhone) this.Connect();
         }
 
-        get Messages(): Data.Message[] { return this.$sessionStorage.messages as Data.Message[]; }
-        set Messages(list: Data.Message[]) { this.$sessionStorage.messages = list; }
+        get Messages(): Data.Message[] { return this.$localStorage.messages as Data.Message[]; }
+        set Messages(list: Data.Message[]) { this.$localStorage.messages = list; }
 
-        get UserLoged(): Data.User { return this.$sessionStorage.logedUser as Data.User }
-        set UserLoged(user: Data.User) { this.$sessionStorage.logedUser = user; }
+        get UserLoged(): Data.User { return this.$localStorage.logedUser as Data.User }
+        set UserLoged(user: Data.User) { this.$localStorage.logedUser = user; }
 
-        get Contacts(): Data.User[] { return this.$sessionStorage.contacts as Data.User[] }
-        set Contacts(list: Data.User[]) { this.$sessionStorage.contacts = list;}
+        get Contacts(): Data.User[] { return this.$localStorage.contacts as Data.User[] }
+        set Contacts(list: Data.User[]) { this.$localStorage.contacts = list;}
 
         DefineWhatchers() {
             this.$scope.$on('messageAdded', (event, msg: Data.Message) => {
@@ -106,6 +106,9 @@
         }
 
         SendMessage() {
+            if (!this.txtMessage)
+                return;
+
             var msg: Data.Message = { Date: new Date(), From: this.UserLoged.ConnectionId, To: this.contactSelected.ConnectionId, Text: this.txtMessage };
             this.Messages.push(msg);
             this.service.SendMessage(msg);
@@ -148,8 +151,8 @@
             return this.contactSelected && this.Messages && this.Messages.filter(a => a.From == this.contactSelected.ConnectionId || a.To == this.contactSelected.ConnectionId);
         }
 
-        SelectedUserIsLogged(): boolean {
-            return !!this.listContactsToUpdateMyConnectionId.filter(a => a.ConnectionId == this.contactSelected.ConnectionId).length;
+        SelectedUserIsNotLogged(): boolean {
+            return this.listContactsToUpdateMyConnectionId && !!this.listContactsToUpdateMyConnectionId.filter(a => a.ConnectionId == this.contactSelected.ConnectionId).length;
         }
     }
 }

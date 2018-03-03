@@ -66,8 +66,8 @@
                 </div>
             </div>
             <footer class="message-bar" ng-if="!!ctrl.contactSelected">
-                <input ng-if="ctrl.SelectedUserIsLogged()" class="form-control" placeholder="Digite a sua mensagem aqui" enter-action="ctrl.SendMessage()" ng-model="ctrl.txtMessage" />
-                <span ng-if="!ctrl.SelectedUserIsLogged()" class="form-control">Usuário não esta logado</span>
+                <input ng-if="!ctrl.SelectedUserIsNotLogged()" class="form-control" placeholder="Digite a sua mensagem aqui" enter-action="ctrl.SendMessage()" ng-model="ctrl.txtMessage" />
+                <span ng-if="!!ctrl.SelectedUserIsNotLogged()" class="form-control">Usuário não esta logado</span>
             </footer>
         </div>
 
