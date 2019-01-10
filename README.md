@@ -17,7 +17,7 @@ Use the host in multiple devices to use the Chat
 
 ## Authors
 
-* **Kevyn Pinheiro Klava** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* [**Kevyn Pinheiro Klava**](https://github.com/PurpleBooth)
 
 See also the list of [contributors](https://github.com/kevynsax/Chat/contributors) who participated in this project.
 
